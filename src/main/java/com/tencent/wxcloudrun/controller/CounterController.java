@@ -1,5 +1,9 @@
 package com.tencent.wxcloudrun.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.tencent.wxcloudrun.config.ApiResponse;
@@ -7,12 +11,14 @@ import com.tencent.wxcloudrun.dto.CounterRequest;
 import com.tencent.wxcloudrun.model.Counter;
 import com.tencent.wxcloudrun.service.CounterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpRequest;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.List;
 
@@ -48,6 +54,50 @@ public class CounterController {
     return ApiResponse.ok(count);
   }
 
+  /**
+   * 获取当前计数
+   * @return API response json
+   */
+  @GetMapping(value = "/getUserInfo")
+  ApiResponse getUserInfo(@RequestParam String code) {
+    logger.info("/getUserInfo get request");
+    //HttpCli
+    //String userId =
+    HttpClient httpClient = new HttpClient();
+    //code = "093QyB0w3zl3b0320Q1w3HZ5Sg2QyB0j";
+    System.out.println("code is " + code);
+    PostMethod postMethod = new PostMethod("https://api.weixin.qq.com/sns/jscode2session?appid=wx1d0725ec8a3d6d60&secret=b6a6be2820991cd5f521a1a9defecd38&js_code=" + code + "&grant_type=authorization_code");
+
+    postMethod.addRequestHeader("accept", "*/*");
+    //设置Content-Type，此处根据实际情况确定
+    postMethod.addRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    String result = "";
+    JSONObject data = new JSONObject();
+    try {
+      int status = httpClient.executeMethod(postMethod);
+      if (status == 200){
+        result = postMethod.getResponseBodyAsString();
+        System.out.println("result:" + result);
+        JSONObject json = JSON.parseObject(result);
+        System.out.println(json);
+        Integer errCode = json.getInteger("errcode");
+        if(errCode != null) {
+          String errMsg = json.getString("errmsg");
+          return ApiResponse.error(errCode, errMsg, json);
+        }
+        //data = json.getJSONObject("data");
+        data = json;
+//        String openId = data.getString("openid");
+//        String sessionKey = data.getString("session_key");
+
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+
+    return ApiResponse.ok(data);
+  }
 
   /**
    * 更新计数，自增或者清零

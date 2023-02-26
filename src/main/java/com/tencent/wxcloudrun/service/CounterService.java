@@ -1,9 +1,9 @@
 package com.tencent.wxcloudrun.service;
 
 import com.tencent.wxcloudrun.model.Counter;
+import com.tencent.wxcloudrun.model.User;
 
 import java.util.Optional;
-import java.util.List;
 
 public interface CounterService {
 
@@ -12,4 +12,8 @@ public interface CounterService {
   void upsertCount(Counter counter);
 
   void clearCount(Integer id);
+
+  boolean hasUser(String userID);
+
+  void createUser(User userInfo);
 }
