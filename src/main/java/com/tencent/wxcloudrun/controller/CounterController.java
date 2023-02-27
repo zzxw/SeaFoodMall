@@ -102,6 +102,7 @@ public class CounterController {
       }else{
         result = postMethod.getResponseBodyAsString();
         System.out.println("发送请求失败，错误码为:" + status);
+        System.out.println(result);
       }
     } catch (IOException e) {
       e.printStackTrace();
