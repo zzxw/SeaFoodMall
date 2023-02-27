@@ -2,6 +2,9 @@ package com.tencent.wxcloudrun.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.tencent.wxcloudrun.model.Cart;
+import com.tencent.wxcloudrun.model.Order;
+import com.tencent.wxcloudrun.model.User;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.slf4j.Logger;
@@ -87,9 +90,18 @@ public class CounterController {
         }
         //data = json.getJSONObject("data");
         data = json;
-//        String openId = data.getString("openid");
-//        String sessionKey = data.getString("session_key");
+        String openId = data.getString("openid");
+        //String sessionKey = data.getString("session_key");
 
+        if(!counterService.hasUser(openId)) {
+          User user = new User();
+          user.setUserId(openId);
+          counterService.createUser(user);
+        }
+
+      }else{
+        result = postMethod.getResponseBodyAsString();
+        System.out.println("发送请求失败，错误码为:" + status);
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -97,6 +109,116 @@ public class CounterController {
 
 
     return ApiResponse.ok(data);
+  }
+
+  @GetMapping(value = "/getCart")
+  ApiResponse getCart(@RequestParam String openId) {
+    logger.info("/getCart get request");
+
+    List<Cart> list = counterService.queryCart(openId);
+
+    return ApiResponse.ok(list);
+  }
+
+  @PostMapping(value = "/newCart")
+  ApiResponse newCart(@RequestParam String openId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price) {
+    logger.info("/newCart get request");
+
+    Cart cart = new Cart();
+    cart.setUserId(openId);
+    cart.setGoodsID(goodsID);
+    cart.setPrice(price);
+    cart.setNum(num);
+
+    counterService.createCart(cart);
+
+    return ApiResponse.ok(0);
+  }
+
+  @PostMapping(value = "/updateCart")
+  ApiResponse updateCart(@RequestParam String openId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price) {
+    logger.info("/updateCart get request");
+
+    Cart cart = new Cart();
+    cart.setUserId(openId);
+    cart.setGoodsID(goodsID);
+    cart.setPrice(price);
+    cart.setNum(num);
+
+    counterService.updateCart(cart);
+
+    return ApiResponse.ok(0);
+  }
+
+  @GetMapping(value = "/deleteCart")
+  ApiResponse deleteCart(@RequestParam String openId, @RequestParam String goodsID) {
+    logger.info("/deleteCart get request");
+
+    counterService.deleteCart(goodsID, openId);
+
+    return ApiResponse.ok(0);
+  }
+
+
+  @GetMapping(value = "/getOrderByUserId")
+  ApiResponse getOrderByUserId(@RequestParam String openId) {
+    logger.info("/getOrderByUserId get request");
+
+    List<Order> list = counterService.queryOrderByUserID(openId);
+
+    return ApiResponse.ok(list);
+  }
+
+  @GetMapping(value = "/getOrderById")
+  ApiResponse getOrderById(@RequestParam String orderId) {
+    logger.info("/getOrderById get request");
+
+    Order order = counterService.queryOrderByID(orderId);
+
+    return ApiResponse.ok(order);
+  }
+
+  @PostMapping(value = "/newOrder")
+  ApiResponse newOrder(@RequestParam String openId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price, @RequestParam int status) {
+    logger.info("/newOrder get request");
+
+    Order order = new Order();
+    order.setGoodsID(goodsID);
+    order.setUserID(openId);
+    order.setNum(num);
+    order.setPrice(price);
+    order.setStatus(status);
+
+
+    counterService.createOrder(order);
+
+    return ApiResponse.ok(0);
+  }
+
+  @PostMapping(value = "/updateOrder")
+  ApiResponse updateOrder(@RequestParam String openId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price, @RequestParam int status) {
+    logger.info("/updateOrder get request");
+
+    Order order = new Order();
+    order.setGoodsID(goodsID);
+    order.setUserID(openId);
+    order.setNum(num);
+    order.setPrice(price);
+    order.setStatus(status);
+
+
+    counterService.updateOrder(order);
+
+    return ApiResponse.ok(0);
+  }
+
+  @GetMapping(value = "/deleteOrder")
+  ApiResponse deleteCart(@RequestParam String orderId) {
+    logger.info("/deleteCart get request");
+
+    counterService.deleteOrder(orderId);
+
+    return ApiResponse.ok(0);
   }
 
   /**

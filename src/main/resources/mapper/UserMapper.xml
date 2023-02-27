@@ -10,7 +10,7 @@
     </resultMap>
 
     <select id="getUser" resultMap="UserMapper" parameterType="java.lang.String">
-        SELECT `userId`, `phoneNumber`, `nickName`
+        SELECT `userId`, `phoneNumber`, `nickName`,`pwd`
         FROM UserInfo
         WHERE userId = #{userId}
     </select>
@@ -22,14 +22,14 @@
         limit 1
     </delete>
 
-    <update id="upsertCount" parameterType="com.tencent.wxcloudrun.model.Counter">
+    <update id="upsertCount" parameterType="com.tencent.wxcloudrun.model.User">
         INSERT INTO `Counters`(`id`, `count`)
         VALUE(#{id}, #{count}) 
         ON DUPLICATE KEY UPDATE count=#{count}
     </update>
 
     <insert id="createUser" parameterType="com.tencent.wxcloudrun.model.User">
-        INSERT INTO `UserInfo`(`userId`, `phoneNumber`,'nickName')
+        INSERT INTO `UserInfo`(`userId`, `phoneNumber`,`nickName`)
             VALUE(#{userId}, #{phoneNumber},#{nickName})
     </insert>
 

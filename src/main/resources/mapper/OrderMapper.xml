@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tencent.wxcloudrun.dao.OrderMapper">
+
+    <resultMap id="OrderMapper" type="com.tencent.wxcloudrun.model.Order">
+        <id property="userID" column="userID"/>
+        <result property="goodsID" column="goodsID"/>
+        <result property="num" column="num"/>
+        <result property="createTime" column="time"/>
+        <result property="price" column="price"/>
+        <result property="status" column="status"/>
+        <result property="orderID" column="orderID"/>
+<!--        <result property="updatedAt" column="updatedAt" javaType="java.time.LocalDateTime"  />-->
+    </resultMap>
+
+    <select id="queryOrderById" resultMap="OrderMapper" parameterType="java.lang.String">
+        SELECT `userId`, `goodsID`, `num`,`price`,`createTime`,`status`,`orderID`,
+        FROM ORDER
+        WHERE orderID = #{orderID}
+    </select>
+
+    <select id="queryOrderByUserId" resultMap="OrderMapper" parameterType="java.lang.String">
+        SELECT `userId`, `goodsID`, `num`,`price`,`createTime`,`status`,`orderID`,
+        FROM ORDER
+        WHERE userID = #{userID}
+    </select>
+
+    <delete id="deleteOrder" parameterType="java.lang.String">
+        DELETE
+        FROM ORDER
+        where orderID = #{orderID} AND userID = #{userID}
+        limit 1
+    </delete>
+
+    <update id="updateOrder" parameterType="com.tencent.wxcloudrun.model.Order">
+        UPDATE `ORDER` SET status = #{status}  WHERE orderID = #{orderID}
+    </update>
+
+    <insert id="createOrder" parameterType="com.tencent.wxcloudrun.model.Order">
+        INSERT INTO `Order`(`userID`, `goodsID`,`num`,`price`, `status`,`orderID`)
+            VALUE(#{userID}, #{goodsID},#{num},#{price}, #{status},#{orderID})
+    </insert>
+
+</mapper>
