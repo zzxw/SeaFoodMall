@@ -120,20 +120,21 @@ public class CounterController {
   }
 
   @PostMapping(value = "/newCart")
-  ApiResponse newCart(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price) {
+  //ApiResponse newCart(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price) {
+  ApiResponse newCart(@RequestBody Cart cart) {
     logger.info("/newCart get request");
-    Cart oldCart = counterService.queryCartByID(userId, goodsID);
-    Cart cart = new Cart();
-    cart.setUserId(userId);
-    cart.setGoodsID(goodsID);
-    cart.setPrice(price);
+    Cart oldCart = counterService.queryCartByID(cart.getUserId(), cart.getGoodsID());
+//    Cart cart = new Cart();
+//    cart.setUserId(userId);
+//    cart.setGoodsID(goodsID);
+//    cart.setPrice(price);
 //    cart.setNum(num);
 //    counterService.createCart(cart);
     if(oldCart != null) {
-      cart.setNum(num + oldCart.getNum());
+      cart.setNum(cart.getNum() + oldCart.getNum());
       counterService.updateCart(cart);
     }else{
-      cart.setNum(num);
+      //cart.setNum(num);
       counterService.createCart(cart);
     }
     return ApiResponse.ok(0);
