@@ -12,9 +12,15 @@
     </resultMap>
 
     <select id="queryCart" resultMap="CartMapper" parameterType="java.lang.String">
-        SELECT `userId`, `goodsID`, `num`,`date`,`price`
+        SELECT `userId`, `goodsID`, `num`,`time`,`price`
         FROM Cart
         WHERE userId = #{userId}
+    </select>
+
+    <select id="queryCartByID" resultMap="CartMapper" parameterType="java.lang.String">
+        SELECT `userId`, `goodsID`, `num`,`time`,`price`
+        FROM Cart
+        WHERE userId = #{userId} AND goodsID = #{goodsID}
     </select>
 
     <delete id="deleteCart" parameterType="java.lang.String">
@@ -23,13 +29,27 @@
         where userId = #{userId} AND goodsID = #{goodsID}
     </delete>
 
+    <delete id="deleteCarts" parameterType="java.util.Map">
+        DELETE
+        FROM Cart
+        where userId in
+        <foreach collection="info.userId" item="userId" index="index" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+          AND
+              goodsID in
+        <foreach collection="info.goodsID" item="goodsID" index="index" open="(" close=")" separator=",">
+              #{goodsID}
+        </foreach>
+    </delete>
+
     <update id="updateCart" parameterType="com.tencent.wxcloudrun.model.Cart">
         UPDATE `Cart` SET num = #{num} ,price = #{price} WHERE userId = #{userId} AND goodsID = #{goodsID}
     </update>
 
     <insert id="createCart" parameterType="com.tencent.wxcloudrun.model.Cart">
-        INSERT INTO `Cart`(`userId`, `goodsID`,`num`,`date`,`price`)
-            VALUE(#{userId}, #{goodsID},#{num},#{date},#{price})
+        INSERT INTO `Cart`(`userId`, `goodsID`,`num`,`price`)
+            VALUE(#{userId}, #{goodsID},#{num},#{price})
     </insert>
 
 </mapper>

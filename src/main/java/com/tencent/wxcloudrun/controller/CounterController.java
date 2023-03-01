@@ -2,16 +2,14 @@ package com.tencent.wxcloudrun.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.tencent.wxcloudrun.model.Cart;
-import com.tencent.wxcloudrun.model.Order;
-import com.tencent.wxcloudrun.model.User;
+import com.tencent.wxcloudrun.model.*;
+import com.tencent.wxcloudrun.util.OrderUtil;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.tencent.wxcloudrun.config.ApiResponse;
 import com.tencent.wxcloudrun.dto.CounterRequest;
-import com.tencent.wxcloudrun.model.Counter;
 import com.tencent.wxcloudrun.service.CounterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
@@ -113,35 +111,40 @@ public class CounterController {
   }
 
   @GetMapping(value = "/getCart")
-  ApiResponse getCart(@RequestParam String openId) {
+  ApiResponse getCart(@RequestParam String userId) {
     logger.info("/getCart get request");
 
-    List<Cart> list = counterService.queryCart(openId);
+    List<Cart> list = counterService.queryCart(userId);
 
     return ApiResponse.ok(list);
   }
 
   @PostMapping(value = "/newCart")
-  ApiResponse newCart(@RequestParam String openId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price) {
+  ApiResponse newCart(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price) {
     logger.info("/newCart get request");
-
+    Cart oldCart = counterService.queryCartByID(userId, goodsID);
     Cart cart = new Cart();
-    cart.setUserId(openId);
+    cart.setUserId(userId);
     cart.setGoodsID(goodsID);
     cart.setPrice(price);
-    cart.setNum(num);
-
-    counterService.createCart(cart);
-
+//    cart.setNum(num);
+//    counterService.createCart(cart);
+    if(oldCart != null) {
+      cart.setNum(num + oldCart.getNum());
+      counterService.updateCart(cart);
+    }else{
+      cart.setNum(num);
+      counterService.createCart(cart);
+    }
     return ApiResponse.ok(0);
   }
 
   @PostMapping(value = "/updateCart")
-  ApiResponse updateCart(@RequestParam String openId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price) {
+  ApiResponse updateCart(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price) {
     logger.info("/updateCart get request");
 
     Cart cart = new Cart();
-    cart.setUserId(openId);
+    cart.setUserId(userId);
     cart.setGoodsID(goodsID);
     cart.setPrice(price);
     cart.setNum(num);
@@ -152,20 +155,39 @@ public class CounterController {
   }
 
   @GetMapping(value = "/deleteCart")
-  ApiResponse deleteCart(@RequestParam String openId, @RequestParam String goodsID) {
+  ApiResponse deleteCart(@RequestParam String userId, @RequestParam String goodsID) {
     logger.info("/deleteCart get request");
 
-    counterService.deleteCart(goodsID, openId);
+    int index = goodsID.indexOf(",");
+    if(index < 0) {
+      counterService.deleteCart(userId, goodsID);
+    }else {
+      String []goodsIDs = goodsID.split(",");
+      Map<String, String[]> map = new HashMap<>();
+      map.put("userId", new String[]{userId});
+      map.put("goodsID", goodsIDs);
+      counterService.deleteCarts(map);
+    }
+
+    return ApiResponse.ok(0);
+  }
+
+  @GetMapping(value = "/deleteCarts")
+  ApiResponse deleteCarts(@RequestParam String userId, @RequestParam String goodsIDs) {
+    logger.info("/deleteCarts get request");
+
+    //counterService.deleteCarts(userId, goodsIDs);
+
 
     return ApiResponse.ok(0);
   }
 
 
   @GetMapping(value = "/getOrderByUserId")
-  ApiResponse getOrderByUserId(@RequestParam String openId) {
+  ApiResponse getOrderByUserId(@RequestParam String userId) {
     logger.info("/getOrderByUserId get request");
 
-    List<Order> list = counterService.queryOrderByUserID(openId);
+    List<Order> list = counterService.queryOrderByUserID(userId);
 
     return ApiResponse.ok(list);
   }
@@ -180,16 +202,18 @@ public class CounterController {
   }
 
   @PostMapping(value = "/newOrder")
-  ApiResponse newOrder(@RequestParam String openId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price, @RequestParam int status) {
+  ApiResponse newOrder(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price, @RequestParam int status) {
     logger.info("/newOrder get request");
 
     Order order = new Order();
     order.setGoodsID(goodsID);
-    order.setUserID(openId);
+    order.setUserID(userId);
     order.setNum(num);
     order.setPrice(price);
     order.setStatus(status);
 
+    String orderID = OrderUtil.getIDByTime();
+    order.setOrderID(orderID);
 
     counterService.createOrder(order);
 
@@ -197,15 +221,16 @@ public class CounterController {
   }
 
   @PostMapping(value = "/updateOrder")
-  ApiResponse updateOrder(@RequestParam String openId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price, @RequestParam int status) {
+  ApiResponse updateOrder(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price, @RequestParam int status, @RequestParam String orderID) {
     logger.info("/updateOrder get request");
 
     Order order = new Order();
     order.setGoodsID(goodsID);
-    order.setUserID(openId);
+    order.setUserID(userId);
     order.setNum(num);
     order.setPrice(price);
     order.setStatus(status);
+    order.setOrderID(orderID);
 
 
     counterService.updateOrder(order);
@@ -219,6 +244,80 @@ public class CounterController {
 
     counterService.deleteOrder(orderId);
 
+    return ApiResponse.ok(0);
+  }
+
+  @GetMapping(value = "/getAddressByUserId")
+  ApiResponse getAddressByUserId(@RequestParam String userId) {
+    logger.info("/getAddressByUserId get request");
+
+    List<Address> list = counterService.queryAddressByUser(userId);
+
+    return ApiResponse.ok(list);
+  }
+
+  @GetMapping(value = "/getAddress")
+  ApiResponse getAddress(@RequestParam String userId, @RequestParam int addressNo) {
+    logger.info("/getAddress get request");
+
+    Address address = counterService.queryAddressById(userId, addressNo);
+
+    return ApiResponse.ok(address);
+  }
+
+
+  @GetMapping(value = "/deleteAddress")
+  ApiResponse deleteAddress(@RequestParam String userId, @RequestParam int addressNo) {
+    logger.info("/deleteAddress get request");
+
+    counterService.deleteAddress(userId, addressNo);
+
+    return ApiResponse.ok(0);
+  }
+
+  @PostMapping(value = "/updateAddress")
+  ApiResponse updateAddress(@RequestParam String province, @RequestParam String city, @RequestParam String detail,
+                            @RequestParam int addressNo, @RequestParam String area, @RequestParam int isDefault,
+                            @RequestParam String phoneNumber, @RequestParam String userName, @RequestParam String userId) {
+    logger.info("/updateAddress get request");
+    Address address = new Address();
+    address.setAddressNo(addressNo);
+    address.setArea(area);
+    address.setCity(city);
+    address.setDetail(detail);
+    address.setProvince(province);
+    address.setIsDefault(isDefault);
+    address.setUserID(userId);
+    address.setPhoneNumber(phoneNumber);
+    address.setUserName(userName);
+
+    if(isDefault == 1) {
+      counterService.updateDefaultAddress(userId);
+    }
+    counterService.updateAddress(address);
+    return ApiResponse.ok(0);
+  }
+
+  @PostMapping(value = "/newAddress")
+  ApiResponse newAddress(@RequestParam String province, @RequestParam String city, @RequestParam String detail,
+                             @RequestParam String area, @RequestParam int isDefault,
+                            @RequestParam String phoneNumber, @RequestParam String userName, @RequestParam String userId) {
+    logger.info("/newAddress get request");
+    Address address = new Address();
+    //address.setAddressNo(addressNo);
+    address.setArea(area);
+    address.setCity(city);
+    address.setDetail(detail);
+    address.setProvince(province);
+    address.setIsDefault(isDefault);
+    address.setUserID(userId);
+    address.setPhoneNumber(phoneNumber);
+    address.setUserName(userName);
+
+    if(isDefault == 1) {
+      counterService.updateDefaultAddress(userId);
+    }
+    counterService.createAddress(address);
     return ApiResponse.ok(0);
   }
 

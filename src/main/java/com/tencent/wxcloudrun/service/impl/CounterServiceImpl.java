@@ -1,18 +1,13 @@
 package com.tencent.wxcloudrun.service.impl;
 
-import com.tencent.wxcloudrun.dao.CartMapper;
-import com.tencent.wxcloudrun.dao.CountersMapper;
-import com.tencent.wxcloudrun.dao.OrderMapper;
-import com.tencent.wxcloudrun.dao.UserMapper;
-import com.tencent.wxcloudrun.model.Cart;
-import com.tencent.wxcloudrun.model.Counter;
-import com.tencent.wxcloudrun.model.Order;
-import com.tencent.wxcloudrun.model.User;
+import com.tencent.wxcloudrun.dao.*;
+import com.tencent.wxcloudrun.model.*;
 import com.tencent.wxcloudrun.service.CounterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -22,12 +17,14 @@ public class CounterServiceImpl implements CounterService {
   final UserMapper userMapper;
   final CartMapper cartMapper;
   final OrderMapper orderMapper;
+  final AddressMapper addressMapper;
 
-  public CounterServiceImpl(@Autowired CountersMapper countersMapper, UserMapper userMapper, CartMapper cartMapper, OrderMapper orderMapper) {
+  public CounterServiceImpl(@Autowired CountersMapper countersMapper, UserMapper userMapper, CartMapper cartMapper, OrderMapper orderMapper, AddressMapper addressMapper) {
     this.countersMapper = countersMapper;
     this.userMapper = userMapper;
     this.cartMapper = cartMapper;
     this.orderMapper = orderMapper;
+    this.addressMapper = addressMapper;
   }
 
   @Override
@@ -75,9 +72,20 @@ public class CounterServiceImpl implements CounterService {
   }
 
   @Override
+  public void deleteCarts(Map<String, String[]> map) {
+    //cartMapper.deleteCarts(userID, goodsIDs);
+    cartMapper.deleteCarts(map);
+  }
+
+  @Override
   public List<Cart> queryCart(String userID) {
     List<Cart> carts = cartMapper.queryCart(userID);
     return carts;
+  }
+
+  @Override
+  public Cart queryCartByID(String userID, String goodsID) {
+    return cartMapper.queryCartByID(userID, goodsID);
   }
 
   @Override
@@ -103,6 +111,36 @@ public class CounterServiceImpl implements CounterService {
   @Override
   public Order queryOrderByID(String orderID) {
     return orderMapper.queryOrderById(orderID);
+  }
+
+  @Override
+  public Address queryAddressById(String userID, int addressNo) {
+    return addressMapper.queryAddressById(userID, addressNo);
+  }
+
+  @Override
+  public List<Address> queryAddressByUser(String userID) {
+    return addressMapper.queryAddressByUser(userID);
+  }
+
+  @Override
+  public void deleteAddress(String userID, int addressNo) {
+    addressMapper.deleteAddress(userID, addressNo);
+  }
+
+  @Override
+  public void updateAddress(Address address) {
+    addressMapper.updateAddress(address);
+  }
+
+  @Override
+  public void updateDefaultAddress(String userId) {
+    addressMapper.updateDefaultAddress(userId);
+  }
+
+  @Override
+  public void createAddress(Address address) {
+    addressMapper.createAddress(address);
   }
 
 

@@ -6,7 +6,7 @@
         <id property="userID" column="userID"/>
         <result property="goodsID" column="goodsID"/>
         <result property="num" column="num"/>
-        <result property="createTime" column="time"/>
+        <result property="createTime" column="createTime"/>
         <result property="price" column="price"/>
         <result property="status" column="status"/>
         <result property="orderID" column="orderID"/>
@@ -14,26 +14,26 @@
     </resultMap>
 
     <select id="queryOrderById" resultMap="OrderMapper" parameterType="java.lang.String">
-        SELECT `userId`, `goodsID`, `num`,`price`,`createTime`,`status`,`orderID`,
-        FROM ORDER
+        SELECT `userID`, `goodsID`, `num`,`price`,`createTime`,`status`,`orderID`
+        FROM `Order`
         WHERE orderID = #{orderID}
     </select>
 
     <select id="queryOrderByUserId" resultMap="OrderMapper" parameterType="java.lang.String">
-        SELECT `userId`, `goodsID`, `num`,`price`,`createTime`,`status`,`orderID`,
-        FROM ORDER
+        SELECT `userID`, `goodsID`, `num`,`price`,`createTime`,`status`,`orderID`
+        FROM `Order`
         WHERE userID = #{userID}
     </select>
 
     <delete id="deleteOrder" parameterType="java.lang.String">
         DELETE
-        FROM ORDER
-        where orderID = #{orderID} AND userID = #{userID}
+        FROM `Order`
+        where orderID = #{orderID}
         limit 1
     </delete>
 
     <update id="updateOrder" parameterType="com.tencent.wxcloudrun.model.Order">
-        UPDATE `ORDER` SET status = #{status}  WHERE orderID = #{orderID}
+        UPDATE `Order` SET status = #{status}  WHERE orderID = #{orderID}
     </update>
 
     <insert id="createOrder" parameterType="com.tencent.wxcloudrun.model.Order">
