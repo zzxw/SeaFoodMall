@@ -48,7 +48,7 @@
 
     <insert id="createAddress" parameterType="com.tencent.wxcloudrun.model.Address">
         INSERT INTO `Address`(`userID`, `provinceName`,`provinceCode`,`cityName`,`cityCode`,`districtName`,`districtCode`,`detail`,`address`,`phoneNumber`,`userName`,`isDefault`)
-            VALUE(#{userID}, #{provinceName},#{provinceCode},#{city},#{cityCode},#{districtName},#{districtCode},#{detail},#{address},#{phoneNumber}, #{userName},#{isDefault})
+            VALUE(#{userID}, #{provinceName},#{provinceCode},#{cityName},#{cityCode},#{districtName},#{districtCode},#{detail},#{address},#{phoneNumber}, #{userName},#{isDefault})
     </insert>
 
 </mapper>
