@@ -4,10 +4,14 @@
 
     <resultMap id="AddressMapper" type="com.tencent.wxcloudrun.model.Address">
         <id property="userID" column="userID"/>
-        <result property="province" column="province"/>
-        <result property="city" column="city"/>
-        <result property="area" column="area"/>
+        <result property="provinceName" column="provinceName"/>
+        <result property="provinceCode" column="provinceCode"/>
+        <result property="cityName" column="cityName"/>
+        <result property="cityCode" column="cityCode"/>
+        <result property="districtName" column="districtName"/>
+        <result property="districtCode" column="districtCode"/>
         <result property="detail" column="detail"/>
+        <result property="address" column="address"/>
         <result property="phoneNumber" column="phoneNumber"/>
         <result property="userName" column="userName"/>
         <result property="addressNo" column="addressNo"/>
@@ -16,13 +20,13 @@
     </resultMap>
 
     <select id="queryAddressByUser" resultMap="AddressMapper" parameterType="java.lang.String">
-        SELECT `userId`, `province`, `city`,`area`,`detail`,`phoneNumber`,`userName`,`isDefault`,`addressNo`
+        SELECT `userId`, `provinceName`,`provinceCode`, `cityName`,`cityCode`,`districtName`,`districtCode`,`address`,`detail`,`phoneNumber`,`userName`,`isDefault`,`addressNo`
         FROM Address
         WHERE userID = #{userID}
     </select>
 
     <select id="queryAddressById" resultMap="AddressMapper">
-        SELECT `userId`, `province`, `city`,`area`,`detail`,`phoneNumber`,`userName`,`isDefault`,`addressNo`
+        SELECT `userId`, `provinceName`,`provinceCode`, `cityName`,`cityCode`,`districtName`,`districtCode`,`address`,`detail`,`phoneNumber`,`userName`,`isDefault`,`addressNo`
         FROM Address
         WHERE userID = #{userID} AND addressNo = #{addressNo}
     </select>
@@ -34,7 +38,8 @@
     </delete>
 
     <update id="updateAddress" parameterType="com.tencent.wxcloudrun.model.Address">
-        UPDATE `Address` SET province = #{province} ,city = #{city}, area = #{area}, detail = #{detail}, phoneNumber = #{phoneNumber}, userName = #{userName}, isDefault = #{isDefault} WHERE userID = #{userID} AND addressNo = #{addressNo}
+        UPDATE `Address` SET provinceName = #{provinceName},provinceCode = #{provinceCode} ,cityName = #{cityName}, cityCode = #{cityCode},districtName = #{districtName},address = #{address},
+                             districtCode = #{districtCode}, detail = #{detail}, phoneNumber = #{phoneNumber}, userName = #{userName}, isDefault = #{isDefault} WHERE userID = #{userID} AND addressNo = #{addressNo}
     </update>
 
     <update id="updateDefaultAddress" parameterType="java.lang.String">
@@ -42,8 +47,8 @@
     </update>
 
     <insert id="createAddress" parameterType="com.tencent.wxcloudrun.model.Address">
-        INSERT INTO `Address`(`userID`, `province`,`city`,`area`,`detail`,`phoneNumber`,`userName`,`isDefault`)
-            VALUE(#{userID}, #{province},#{city},#{area},#{detail},#{phoneNumber}, #{userName},#{isDefault})
+        INSERT INTO `Address`(`userID`, `provinceName`,`provinceCode`,`cityName`,`cityCode`,`districtName`,`districtCode`,`detail`,`address`,`phoneNumber`,`userName`,`isDefault`)
+            VALUE(#{userID}, #{provinceName},#{provinceCode},#{city},#{cityCode},#{districtName},#{districtCode},#{detail},#{address},#{phoneNumber}, #{userName},#{isDefault})
     </insert>
 
 </mapper>

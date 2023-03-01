@@ -3,11 +3,17 @@ package com.tencent.wxcloudrun.model;
 public class Address {
     private String userID;
 
-    private String province;
+    private String provinceName;
 
-    private String city;
+    private String provinceCode;
 
-    private String area;
+    private String cityName;
+
+    private String cityCode;
+
+    private String districtName;
+
+    private String districtCode;
 
     private String detail;
 
@@ -19,6 +25,8 @@ public class Address {
 
     private int isDefault;
 
+    private String address;
+
     public String getUserID() {
         return userID;
     }
@@ -27,28 +35,21 @@ public class Address {
         this.userID = userID;
     }
 
-    public String getProvince() {
-        return province;
+    public String getProvinceName() {
+        return provinceName;
     }
 
-    public void setProvince(String province) {
-        this.province = province;
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
 
     public String getArea() {
-        return area;
+        return districtName;
     }
 
     public void setArea(String area) {
-        this.area = area;
+        this.districtName = area;
     }
 
     public String getDetail() {
@@ -89,5 +90,53 @@ public class Address {
 
     public void setIsDefault(int isDefault) {
         this.isDefault = isDefault;
+    }
+
+    public String getProvinceCode() {
+        return provinceCode;
+    }
+
+    public void setProvinceCode(String provinceCode) {
+        this.provinceCode = provinceCode;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public void setDistrictName(String districtName) {
+        this.districtName = districtName;
+    }
+
+    public String getDistrictCode() {
+        return districtCode;
+    }
+
+    public void setDistrictCode(String districtCode) {
+        this.districtCode = districtCode;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
