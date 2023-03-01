@@ -122,7 +122,7 @@ public class CounterController {
   @PostMapping(value = "/newCart")
   //ApiResponse newCart(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price) {
   ApiResponse newCart(@RequestBody Cart cart) {
-    logger.info("/newCart get request");
+    logger.info("/newCart post request");
     Cart oldCart = counterService.queryCartByID(cart.getUserId(), cart.getGoodsID());
 //    Cart cart = new Cart();
 //    cart.setUserId(userId);
@@ -141,14 +141,14 @@ public class CounterController {
   }
 
   @PostMapping(value = "/updateCart")
-  ApiResponse updateCart(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price) {
-    logger.info("/updateCart get request");
+  ApiResponse updateCart(@RequestBody Cart cart) {
+    logger.info("/updateCart post request");
 
-    Cart cart = new Cart();
-    cart.setUserId(userId);
-    cart.setGoodsID(goodsID);
-    cart.setPrice(price);
-    cart.setNum(num);
+//    Cart cart = new Cart();
+//    cart.setUserId(userId);
+//    cart.setGoodsID(goodsID);
+//    cart.setPrice(price);
+//    cart.setNum(num);
 
     counterService.updateCart(cart);
 
@@ -203,15 +203,16 @@ public class CounterController {
   }
 
   @PostMapping(value = "/newOrder")
-  ApiResponse newOrder(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price, @RequestParam int status) {
-    logger.info("/newOrder get request");
+  //ApiResponse newOrder(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price, @RequestParam int status) {
+  ApiResponse newOrder(@RequestBody Order order) {
+    logger.info("/newOrder post request");
 
-    Order order = new Order();
-    order.setGoodsID(goodsID);
-    order.setUserID(userId);
-    order.setNum(num);
-    order.setPrice(price);
-    order.setStatus(status);
+//    Order order = new Order();
+//    order.setGoodsID(goodsID);
+//    order.setUserID(userId);
+//    order.setNum(num);
+//    order.setPrice(price);
+//    order.setStatus(status);
 
     String orderID = OrderUtil.getIDByTime();
     order.setOrderID(orderID);
@@ -222,16 +223,17 @@ public class CounterController {
   }
 
   @PostMapping(value = "/updateOrder")
-  ApiResponse updateOrder(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price, @RequestParam int status, @RequestParam String orderID) {
-    logger.info("/updateOrder get request");
+ // ApiResponse updateOrder(@RequestParam String userId, @RequestParam String goodsID, @RequestParam int num, @RequestParam double price, @RequestParam int status, @RequestParam String orderID) {
+  ApiResponse updateOrder(@RequestBody Order order) {
+    logger.info("/updateOrder post request");
 
-    Order order = new Order();
-    order.setGoodsID(goodsID);
-    order.setUserID(userId);
-    order.setNum(num);
-    order.setPrice(price);
-    order.setStatus(status);
-    order.setOrderID(orderID);
+//    Order order = new Order();
+//    order.setGoodsID(goodsID);
+//    order.setUserID(userId);
+//    order.setNum(num);
+//    order.setPrice(price);
+//    order.setStatus(status);
+//    order.setOrderID(orderID);
 
 
     counterService.updateOrder(order);
@@ -277,46 +279,48 @@ public class CounterController {
   }
 
   @PostMapping(value = "/updateAddress")
-  ApiResponse updateAddress(@RequestParam String province, @RequestParam String city, @RequestParam String detail,
-                            @RequestParam int addressNo, @RequestParam String area, @RequestParam int isDefault,
-                            @RequestParam String phoneNumber, @RequestParam String userName, @RequestParam String userId) {
-    logger.info("/updateAddress get request");
-    Address address = new Address();
-    address.setAddressNo(addressNo);
-    address.setArea(area);
-    address.setCity(city);
-    address.setDetail(detail);
-    address.setProvince(province);
-    address.setIsDefault(isDefault);
-    address.setUserID(userId);
-    address.setPhoneNumber(phoneNumber);
-    address.setUserName(userName);
+//  ApiResponse updateAddress(@RequestParam String province, @RequestParam String city, @RequestParam String detail,
+//                            @RequestParam int addressNo, @RequestParam String area, @RequestParam int isDefault,
+//                            @RequestParam String phoneNumber, @RequestParam String userName, @RequestParam String userId) {
+  ApiResponse updateAddress(@RequestBody Address address) {
+    logger.info("/updateAddress post request");
+//    Address address = new Address();
+//    address.setAddressNo(addressNo);
+//    address.setArea(area);
+//    address.setCity(city);
+//    address.setDetail(detail);
+//    address.setProvince(province);
+//    address.setIsDefault(isDefault);
+//    address.setUserID(userId);
+//    address.setPhoneNumber(phoneNumber);
+//    address.setUserName(userName);
 
-    if(isDefault == 1) {
-      counterService.updateDefaultAddress(userId);
+    if(address.getIsDefault() == 1) {
+      counterService.updateDefaultAddress(address.getUserID());
     }
     counterService.updateAddress(address);
     return ApiResponse.ok(0);
   }
 
   @PostMapping(value = "/newAddress")
-  ApiResponse newAddress(@RequestParam String province, @RequestParam String city, @RequestParam String detail,
-                             @RequestParam String area, @RequestParam int isDefault,
-                            @RequestParam String phoneNumber, @RequestParam String userName, @RequestParam String userId) {
-    logger.info("/newAddress get request");
-    Address address = new Address();
+//  ApiResponse newAddress(@RequestParam String province, @RequestParam String city, @RequestParam String detail,
+//                             @RequestParam String area, @RequestParam int isDefault,
+//                            @RequestParam String phoneNumber, @RequestParam String userName, @RequestParam String userId) {
+  ApiResponse newAddress(@RequestBody Address address) {
+    logger.info("/newAddress post request");
+    //Address address = new Address();
     //address.setAddressNo(addressNo);
-    address.setArea(area);
-    address.setCity(city);
-    address.setDetail(detail);
-    address.setProvince(province);
-    address.setIsDefault(isDefault);
-    address.setUserID(userId);
-    address.setPhoneNumber(phoneNumber);
-    address.setUserName(userName);
+//    address.setArea(area);
+//    address.setCity(city);
+//    address.setDetail(detail);
+//    address.setProvince(province);
+//    address.setIsDefault(isDefault);
+//    address.setUserID(userId);
+//    address.setPhoneNumber(phoneNumber);
+//    address.setUserName(userName);
 
-    if(isDefault == 1) {
-      counterService.updateDefaultAddress(userId);
+    if(address.getIsDefault() == 1) {
+      counterService.updateDefaultAddress(address.getUserID());
     }
     counterService.createAddress(address);
     return ApiResponse.ok(0);
