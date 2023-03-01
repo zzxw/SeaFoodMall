@@ -20,13 +20,13 @@
     </resultMap>
 
     <select id="queryAddressByUser" resultMap="AddressMapper" parameterType="java.lang.String">
-        SELECT `userId`, `provinceName`,`provinceCode`, `cityName`,`cityCode`,`districtName`,`districtCode`,`address`,`detail`,`phoneNumber`,`userName`,`isDefault`,`addressNo`
+        SELECT `userID`, `provinceName`,`provinceCode`, `cityName`,`cityCode`,`districtName`,`districtCode`,`address`,`detail`,`phoneNumber`,`userName`,`isDefault`,`addressNo`
         FROM Address
         WHERE userID = #{userID}
     </select>
 
     <select id="queryAddressById" resultMap="AddressMapper">
-        SELECT `userId`, `provinceName`,`provinceCode`, `cityName`,`cityCode`,`districtName`,`districtCode`,`address`,`detail`,`phoneNumber`,`userName`,`isDefault`,`addressNo`
+        SELECT `userID`, `provinceName`,`provinceCode`, `cityName`,`cityCode`,`districtName`,`districtCode`,`address`,`detail`,`phoneNumber`,`userName`,`isDefault`,`addressNo`
         FROM Address
         WHERE userID = #{userID} AND addressNo = #{addressNo}
     </select>
